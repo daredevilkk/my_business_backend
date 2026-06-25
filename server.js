@@ -1,19 +1,24 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const Order = require("./models/Order");
 const Product = require("./models/Product");
 const User = require("./models/UserModel");
+const upload = require("./upload");
 const app = express();
+
 
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(
-  "mongodb+srv://kishor:kishorff@cluster0.iaxtm1l.mongodb.net/tableStore?retryWrites=true&w=majority"
-)
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.log(err));
+
+console.log(process.env.MONGO_URI);
+mongoose.connect(process.env.MONGO_URI)
+
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
+
 
 const Help = require("./models/Help");
 
@@ -27,6 +32,12 @@ app.post("/help", async (req, res) => {
     success: true,
   });
 });
+app.post("/upload", upload.single("file"), (req, res) => {
+  res.json({
+    url: req.file.path,
+  });
+});
+
 app.post("/register", async (req, res) => {
   const { userId, phone, password } = req.body;
 
