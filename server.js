@@ -27,7 +27,52 @@ app.post("/help", async (req, res) => {
     success: true,
   });
 });
+app.post("/register", async (req, res) => {
+  const { userId, phone, password } = req.body;
 
+  const existingUser = await User.findOne({
+    $or: [{ userId }, { phone }]
+  });
+
+  if (existingUser) {
+    return res.status(400).json({
+      message: "User already exists"
+    });
+  }
+
+  const user = new User({
+    userId,
+    phone,
+    password
+  });
+
+  await user.save();
+
+  res.json({
+    message: "Registered Successfully"
+  });
+});
+app.post("/login", async (req, res) => {
+  const { login, password } = req.body;
+
+  const user = await User.findOne({
+    password,
+    $or: [
+      { userId: login },
+      { phone: login }
+    ]
+  });
+
+  if (!user) {
+    return res.status(401).json({
+      message: "Invalid Credentials"
+    });
+  }
+
+  res.json({
+    userId: user.userId
+  });
+});
 app.get("/help", async (req, res) => {
   const helps = await Help.find();
 
@@ -82,11 +127,15 @@ app.post("/orders", async (req, res) => {
 
   res.json({ success: true });
 });
-app.get("/orders", async (req, res) => {
-  const orders = await Order.find();
+app.get("/orders/:userId", async (req, res) => {
+  const orders = await Order.find({
+    userId: req.params.userId,
+  });
 
   res.json(orders);
 });
-app.listen(5000, () => {
-  console.log("Server running on port 5000");
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
