@@ -3,7 +3,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const Order = require("./models/Order");
 const Product = require("./models/Product");
-
+const User = require("./models/UserModel");
 const app = express();
 
 app.use(cors());
