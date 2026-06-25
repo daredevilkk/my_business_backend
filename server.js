@@ -128,11 +128,17 @@ app.post("/orders", async (req, res) => {
   res.json({ success: true });
 });
 app.get("/orders/:userId", async (req, res) => {
-  const orders = await Order.find({
-    userId: req.params.userId,
-  });
+  try {
+    const orders = await Order.find({
+      userId: req.params.userId,
+    });
 
-  res.json(orders);
+    res.json(orders);
+  } catch (err) {
+    res.status(500).json({
+      message: err.message,
+    });
+  }
 });
 const PORT = process.env.PORT || 5000;
 
