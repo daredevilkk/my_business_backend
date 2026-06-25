@@ -12,8 +12,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-console.log(process.env.MONGO_URI);
 mongoose.connect(process.env.MONGO_URI)
 
   .then(() => console.log("MongoDB Connected"))
@@ -33,11 +31,18 @@ app.post("/help", async (req, res) => {
   });
 });
 app.post("/upload", upload.single("file"), (req, res) => {
-  res.json({
-    url: req.file.path,
-  });
+  try {
+    res.json({
+      success: true,
+      url: req.file.path,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
 });
-
 app.post("/register", async (req, res) => {
   const { userId, phone, password } = req.body;
 
@@ -103,14 +108,20 @@ app.get("/products/:id", async (req, res) => {
 });
 
 app.post("/products", async (req, res) => {
-  const product = new Product(req.body);
+  try {
+    const product = new Product(req.body);
+    await product.save();
 
-  await product.save();
-
-  res.json({
-    success: true,
-    message: "Product Added"
-  });
+    res.json({
+      success: true,
+      message: "Product Added"
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message
+    });
+  }
 });
 app.put("/orders/:id/cancel", async (req, res) => {
   try {
@@ -137,6 +148,21 @@ app.post("/orders", async (req, res) => {
   await order.save();
 
   res.json({ success: true });
+});
+app.post("/admin-login", (req, res) => {
+  const { username, password } = req.body;
+
+  if (
+    username === process.env.ADMIN_USERNAME &&
+    password === process.env.ADMIN_PASSWORD
+  ) {
+    return res.json({ success: true });
+  }
+
+  res.status(401).json({
+    success: false,
+    message: "Invalid Username or Password"
+  });
 });
 app.get("/orders/:userId", async (req, res) => {
   try {
