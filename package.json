@@ -1,16 +1,10 @@
 {
-<<<<<<< HEAD
-  "name": "my_business_backend",
-  "version": "1.0.0",
-  "description": "",
-  "main": "server,.js",
-=======
   "name": "backend",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
->>>>>>> 7bdc3b52d56e4a8d8f4eef65dcda02cfb3b8d346
+  "main": "server.js",
   "scripts": {
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,10 +12,6 @@
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-<<<<<<< HEAD
-    "express": "^5.2.1",
-    "mongoose": "^9.7.2"
-=======
     "cloudinary": "^1.41.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
@@ -29,6 +19,5 @@
     "mongoose": "^9.7.2",
     "multer": "^2.2.0",
     "multer-storage-cloudinary": "^4.0.0"
->>>>>>> 7bdc3b52d56e4a8d8f4eef65dcda02cfb3b8d346
   }
 }
